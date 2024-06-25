@@ -1,17 +1,21 @@
 package conversorMoneda.modelos;
 
 import conversorMoneda.calculos.Conversor;
+import java.time.*;
 
-import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Menu {
     private final List<String> nombreMoneda
-            = new ArrayList<>(Arrays.asList("Dolar","Peso Argentino","Real Brasileño","Peso Colombiano"));
+            = new ArrayList<>(Arrays.asList("Dolar","Peso Argentino","Real Brasileño","Peso Colombiano", "Peso Mexicano",
+            "Peso Cubano", "Boliviano de Bolivia", "Peso Chileno", "Colón Costarricense", "Quetzal Gualtemalteco"));
     private final List<String> codigoMoneda
-            = new ArrayList<>(Arrays.asList("USD", "ARS", "BRL", "COP"));
+            = new ArrayList<>(Arrays.asList("USD", "ARS", "BRL", "COP", "MXN",
+            "CUP", "BOB", "CLP", "CRC", "GTQ"));
 
     public void mostrarMenu(){
+        List<ConverMonedas> historial = new ArrayList<>();
         Scanner leer = new Scanner(System.in);
         Conversor conversor = new Conversor();
         while(true) {
@@ -33,20 +37,25 @@ public class Menu {
                         monedaExcApi = conversor.hacerConversion(codigoMoneda.getFirst(), codigoMoneda.get(eleccionMod), cantidad);
                     }
                     Moneda monedaSalida = new Moneda(monedaExcApi);
-                    ConverMonedas converMonedas = new ConverMonedas(monedaEntrada,monedaSalida);
-                    System.out.println(converMonedas);
+                    LocalTime tiempo = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+                    ConverMonedas converMonedas = new ConverMonedas(monedaEntrada,monedaSalida,tiempo);
+                    System.out.println(converMonedas + "\n");
+                    historial.add(converMonedas);
                 }
                 else {
                     System.out.println("Ingresa una opcion valida");
                 }
-                System.out.println("Presione Enter para continuar...");
-                leer.nextLine();
-                leer.reset();
             } catch (NumberFormatException e) {
                 System.out.println("Caracteres no validos por favor ingrese un numero");
             }
+            System.out.println("Presione Enter para continuar...");
+            leer.nextLine();
         }
         System.out.println("Conversor finalizado.");
+        System.out.println("A continuacion se mostrara el historia de Conversiones...\n");
+        for(ConverMonedas hist: historial){
+            System.out.println(hist);
+        }
     }
 
     private void mostrarLista(){
